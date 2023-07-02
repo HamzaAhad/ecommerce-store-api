@@ -1,14 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const http = require("http");
 
-const db = require("../../models/index");
+const db = require("./models/index");
 const UserModel = db.users;
 const ProductModel = db.products;
 const CartModel = db.cart;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
-const config = require("../../config/auth.config");
+const config = require("./config/auth.config");
 
 const { Server } = require("socket.io");
 
@@ -233,10 +234,12 @@ io.on("connection", (socket) => {
   // We can write our socket event listeners in here...
   // Add a user to a room
   socket.on("join", (room) => {
+    console.log("Joined room");
     socket.join(room);
   });
 
   socket.on("chatMessage", (room, message) => {
+    console.log("Received message:", message);
     io.to(room).emit("message", message);
   });
   socket.on("disconnect", () => {
@@ -250,5 +253,5 @@ if (port == null || port == "") {
 }
 
 app.listen(port, () => {
-  console.log("Server Started");
+  console.log("Server Started on Port ", port);
 });
